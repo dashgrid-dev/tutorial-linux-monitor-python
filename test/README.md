@@ -12,11 +12,17 @@ cp config.test.yaml.example config.test.yaml
 ## Run
 
 ```bash
-bash test-docker.sh
+./test-docker.sh
 ```
 
 The script mounts the repo into a `python:3.12-slim` container, installs `PyYAML`, and runs `monitor.py` against the `api_host` in `config.test.yaml`.
 
 Ctrl-C to stop. First sample appears after one `interval` (baseline for CPU/network deltas).
+
+If Ctrl-C doesn't clean up (e.g. the terminal was closed), kill the container from another shell:
+
+```bash
+docker ps --filter ancestor=python:3.12-slim -q | xargs -r docker kill
+```
 
 Metrics reflect the *container*, not your Mac — CPU/memory are the container's share, disk is the Docker Desktop VM's virtual disk, network is the container's veth.
