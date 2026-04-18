@@ -5,20 +5,25 @@ A single Python script that pushes system metrics to [Dashgrid](https://dashgrid
 ## Prerequisites
 
 1. Create a Dashgrid account and get an API key
-2. Create 4 TSV data buckets per host (CPU, Memory, Disk, Network)
+2. Create 5 TSV data buckets per host (CPU, Load, Memory, Disk, Network)
 3. Python 3.11+ on the target Linux host (`python3` and `python3-venv`)
 
 ## Metrics
 
-| Bucket | Series 1 | Series 2 | Series 3 | Series 4 |
-|--------|----------|----------|----------|----------|
-| CPU | usage % | load 1m | load 5m | load 15m |
-| Memory | total MB | used MB | available MB | — |
-| Disk | total MB | used MB | available MB | — |
-| Network | rx KB/s | tx KB/s | — | — |
+| Bucket | Series 1 | Series 2 | Series 3 |
+|--------|----------|----------|----------|
+| CPU | usage % | — | — |
+| Load | load 1m | load 5m | load 15m |
+| Memory | total MB | used MB | available MB |
+| Disk | total MB | used MB | available MB |
+| Network | rx KB/s | tx KB/s | — |
+
+CPU usage and load are separate buckets because they're different quantities: usage is a bounded percentage, load is an unbounded process-count. Put them on separate charts with independent axes.
 
 ### CPU
 - **usage %** — percentage of CPU time spent working (not idle) since last sample. Computed as delta from `/proc/stat`.
+
+### Load
 - **load 1m / 5m / 15m** — average number of processes waiting to run over the last 1, 5, and 15 minutes. A load of 1.0 on a single-core machine means it's fully busy. Scale by number of cores.
 
 ### Memory
@@ -48,6 +53,7 @@ interval: 10
 
 buckets:
   cpu: "bucket-id-cpu"
+  load: "bucket-id-load"
   memory: "bucket-id-memory"
   disk: "bucket-id-disk"
   network: "bucket-id-network"

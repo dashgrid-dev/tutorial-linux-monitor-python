@@ -180,12 +180,15 @@ def main():
         ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
         rec = lambda *d: [{"k": ts, "d": list(d)}]
 
-        # CPU: usage%, load 1/5/15
+        # CPU: usage%
         cur_cpu = read_cpu()
         cpu_val = cpu_pct(prev_cpu, cur_cpu)
-        l1, l5, l15 = load_avg()
-        post(cfg, buckets.get("cpu"), rec(series(1, cpu_val), series(2, l1), series(3, l5), series(4, l15)))
+        post(cfg, buckets.get("cpu"), rec(series(1, cpu_val)))
         prev_cpu = cur_cpu
+
+        # Load: 1m, 5m, 15m
+        l1, l5, l15 = load_avg()
+        post(cfg, buckets.get("load"), rec(series(1, l1), series(2, l5), series(3, l15)))
 
         # Memory (MB): total, used, available
         mt, mu, ma = read_mem()
@@ -202,8 +205,8 @@ def main():
         prev_net = cur_net
         post(cfg, buckets.get("network"), rec(series(1, rx_kb), series(2, tx_kb)))
 
-        log.info("[%s] cpu=%.1f%% mem=%d/%dMB disk=%d/%dMB net=%.2f/%.2f KB/s",
-                 ts, cpu_val, mu, mt, du, dt, rx_kb, tx_kb)
+        log.info("[%s] cpu=%.1f%% load=%.2f/%.2f/%.2f mem=%d/%dMB disk=%d/%dMB net=%.2f/%.2f KB/s",
+                 ts, cpu_val, l1, l5, l15, mu, mt, du, dt, rx_kb, tx_kb)
         time.sleep(interval)
 
 
