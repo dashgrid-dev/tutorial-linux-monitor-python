@@ -19,10 +19,11 @@ The script mounts the repo into a `python:3.12-slim` container, installs `PyYAML
 
 Ctrl-C to stop. First sample appears after one `interval` (baseline for CPU/network deltas).
 
+### Stop container
 If Ctrl-C doesn't clean up (e.g. the terminal was closed), kill the container from another shell:
 
 ```bash
 docker ps --filter ancestor=python:3.12-slim -q | xargs -r docker kill
 ```
 
-Metrics reflect the *container*, not your Mac — CPU/memory are the container's share, disk is the Docker Desktop VM's virtual disk, network is the container's veth.
+Metrics reflect the *container*, not your machine — CPU/memory are the container's share, disk is the Docker Desktop VM's virtual disk, network is the container's veth.
