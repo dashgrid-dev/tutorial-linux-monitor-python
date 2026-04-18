@@ -169,10 +169,11 @@ def main():
     cfg = load_config()
     buckets = cfg["buckets"]
     iface = default_iface()
+    ncpu = os.cpu_count() or 1
     prev_cpu = read_cpu()
     prev_net = read_net(iface)
 
-    log.info("started (interval: %ds, iface: %s)", cfg["interval"], iface)
+    log.info("started (interval: %ds, iface: %s, cores: %d)", cfg["interval"], iface, ncpu)
     interval = cfg["interval"]
     time.sleep(interval)
 
@@ -186,9 +187,13 @@ def main():
         post(cfg, buckets.get("cpu"), rec(series(1, cpu_val)))
         prev_cpu = cur_cpu
 
-        # Load: 1m, 5m, 15m
+        # Load: raw 1m/5m/15m + normalized (raw / ncpu) + core count
         l1, l5, l15 = load_avg()
-        post(cfg, buckets.get("load"), rec(series(1, l1), series(2, l5), series(3, l15)))
+        post(cfg, buckets.get("load"), rec(
+            series(1, l1), series(2, l5), series(3, l15),
+            series(4, l1 / ncpu), series(5, l5 / ncpu), series(6, l15 / ncpu),
+            series(7, ncpu),
+        ))
 
         # Memory (MB): total, used, available
         mt, mu, ma = read_mem()
