@@ -10,13 +10,13 @@ A single Python script that pushes system metrics to [Dashgrid](https://dashgrid
 
 ## Metrics
 
-| Bucket | Series 1 | Series 2 | Series 3 | Series 4 | Series 5 | Series 6 |
-|--------|----------|----------|----------|----------|----------|----------|
-| CPU | usage % | — | — | — | — | — |
-| Load | load 1m | load 5m | load 15m | load 1m / core | load 5m / core | load 15m / core |
-| Memory | total MB | used MB | available MB | — | — | — |
-| Disk | total MB | used MB | available MB | — | — | — |
-| Network | rx KB/s | tx KB/s | — | — | — | — |
+| Bucket | Series 1 | Series 2 | Series 3 | Series 4 | Series 5 | Series 6 | Series 7 |
+|--------|----------|----------|----------|----------|----------|----------|----------|
+| CPU | usage % | — | — | — | — | — | — |
+| Load | load 1m | load 5m | load 15m | load 1m / core | load 5m / core | load 15m / core | cores |
+| Memory | total MB | used MB | available MB | — | — | — | — |
+| Disk | total MB | used MB | available MB | — | — | — | — |
+| Network | rx KB/s | tx KB/s | — | — | — | — | — |
 
 CPU usage and load are separate buckets because they're different quantities: usage is a bounded percentage, load is an unbounded process-count. Put them on separate charts with independent axes.
 
@@ -26,6 +26,7 @@ CPU usage and load are separate buckets because they're different quantities: us
 ### Load
 - **load 1m / 5m / 15m** — average number of processes waiting to run over the last 1, 5, and 15 minutes. A load of 1.0 on a single-core machine means it's fully busy.
 - **load 1m / 5m / 15m per core** — raw load divided by `os.cpu_count()`. 1.0 = fully saturated regardless of host; > 1.0 means the run queue is backing up. Cross-host comparable.
+- **cores** — number of CPU cores visible to the process (`os.cpu_count()`). Static; useful as a dashboard threshold line on the raw-load chart.
 
 ### Memory
 - **total MB** — total physical RAM installed.
